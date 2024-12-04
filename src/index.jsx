@@ -5,24 +5,43 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import TaskReducer from './TaskReducer';
 
+import storage from "redux-persist/lib/storage"
+import {persistReducer} from "redux-persist"
+import { combineReducers } from '@reduxjs/toolkit';
+import { PersistGate } from 'redux-persist/integration/react';
+import { persistStore } from 'redux-persist';
+
 //FICHIER MAIN.JSX//
 /*
 raf :
-1. middleware memoire des tasks
-2. typage des fichiers jsx -> tsx
-3. Design (ui + ux editing)
+1. typage des fichiers jsx -> tsx
+2. Design (ui + ux editing)
 */
 
+const persistConfig = {
+  key: "root",
+  version: 1,
+  storage
+};
+
+const reducer = combineReducers({
+  tasks: TaskReducer
+});
+
+const persistedReducer = persistReducer(persistConfig, reducer);
+
 const store = configureStore({
-  reducer: {
-    tasks: TaskReducer
-  }
+  reducer: persistedReducer
 })
+
+let persistor = persistStore(store)
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}> 
+      <PersistGate persistor={persistor} >
         <App />
+      </PersistGate>
     </Provider>
   </React.StrictMode>,
 )
