@@ -11,12 +11,6 @@ import { combineReducers } from '@reduxjs/toolkit';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
 
-//FICHIER MAIN.JSX//
-/*
-raf :
-1. typage des fichiers jsx -> tsx
-2. Design (ui + ux editing)
-*/
 
 const persistConfig = {
   key: "root",

@@ -1,66 +1,68 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
 import { addTask, deleteTask } from "./TaskReducer";
 
 function Home() {
     const tasks = useSelector((state) => state.tasks );
     const [task, setTask] = useState('')
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        dispatch(addTask({id: tasks[tasks.length-1].id + 1 , task: task }))
-        navigate('/');
+        if(!task){
+            alert("Please enter a task.")
+            event.target.reset();
+            return
+        }
+        dispatch(addTask(
+            {
+                id: tasks.length ? tasks[tasks.length-1].id + 1 : 1 , 
+                task: task 
+            }
+        ))
+        event.target.reset();
     }
 
     const handleDelete = (id) => {
-        dispatch(deleteTask({id :id}))
+        dispatch(deleteTask(
+            {
+                id :id
+            }
+        ))
     }
 
     return (
-        <div className="container" >
+        <div className="container my-4" >
+            <div className='mx-auto rounded border p-4' style={{width:"600px", backgroundColor: "#f3f2f6"}} >
+                
+                <h2 className="text-center mb-4">Todo list App</h2>
 
-            <h2>Todo list app</h2>
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Task</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {tasks.map((task, index) => (
-                        <tr key={index}>
-                            <td>{task.id}</td>
-                            <td>{task.task}</td>
-                            <td>
-                                <Link to={`/edit/${task.id}`} className="btn btn-sm btn-primary" >Edit</Link>
-                                <button onClick={()=> handleDelete(task.id)} className="btn btn-sm btn-danger ms-2" >Delete</button>
-                            </td>
-                        </tr>
-                    ))}
+                {
+                    tasks.map((task, index) => {
+                        return (
+                            <div key={index} className="rounded mt-4 p-2 d-flex" style={{backgroundColor: "#ffffff"}}>
 
-                </tbody>
-            </table>
+                                <div className='me-auto'>
+                                    {task.task}
+                                </div>
+                                <div>
+                                    <i className="bi bi-trash text-danger" style={{cursor:"pointer"}} 
+                                     onClick={() => handleDelete(task.id) } ></i>
+                                </div>
 
-            <div className='border bg-secondary text-white p-5'>
-                <h3>Add new task</h3>
-                <form onSubmit={handleSubmit} >
-                    <div>
-                        <input type="text" name='task' className='form-control' onChange={e=> setTask(e.target.value)} />
-                    </div><br/>
-                    <button className='btn btn-info' >Submit</button>
+                            </div>
+                        )
+                    })
+                }
+
+                <br/>
+                <form className="d-flex" onSubmit={handleSubmit} >
+                    <input className='form-control me-2' placeholder='Add a new task...' type="text" name='task' onChange={e=> setTask(e.target.value)} />
+                    <button className='btn btn-outline-success'>Add</button>
                 </form>
             </div>
-
         </div>
 
-        
-
-        
     )
 }
 
